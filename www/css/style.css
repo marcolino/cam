@@ -22,3 +22,7 @@ body {
   margin-right: auto;
   display: block;
 }
+
+.row.flush-col > [class*="col-"] {padding:0;}
+
+.img-fluid {width:100%;}

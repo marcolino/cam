@@ -3,47 +3,68 @@ angular.module('starter.controllers', [])
 .controller('PhotoCtrl', function($scope) {
 
   $scope.items = [];
+
 $scope.items.push({
-  imgSrc: 'http://placehold.it/64x64',
+  id: '1',
+  imgSrc: 'http://placehold.it/48x48',
   title: 'titolo foto 1',
   description: 'descrizione foto 1',
   dateOfCreation: new Date(),
   position: 'here...',
 });
 $scope.items.push({
-  imgSrc: 'http://placehold.it/64x64',
+  id: '2',
+  imgSrc: 'http://placehold.it/48x48',
   title: 'titolo foto 2',
   description: 'descrizione foto 2',
   dateOfCreation: new Date(),
   position: 'here...',
 });
 $scope.items.push({
-  imgSrc: 'http://placehold.it/64x64',
+  id: '3',
+  imgSrc: 'http://placehold.it/48x48',
   title: 'titolo foto 3',
   description: 'descrizione foto 3',
   dateOfCreation: new Date(),
   position: 'here...',
 });
+$scope.items[0].dateOfCreation.setSeconds($scope.items[0].dateOfCreation.getSeconds() - (60 * 1));
+$scope.items[1].dateOfCreation.setSeconds($scope.items[1].dateOfCreation.getSeconds() - (60 * 2));
+$scope.items[2].dateOfCreation.setSeconds($scope.items[2].dateOfCreation.getSeconds() - (60 * 3));
 
-  $scope.shouldShowDelete = false;
-  $scope.shouldShowReorder = false; // set to true disables input
-  $scope.listCanSwipe = true
+  $scope.shouldShowDelete = true;
+  $scope.shouldShowReorder = true; // set to true disables input
+  $scope.listCanSwipe = true;
+  $scope.sort = {
+    key: 'dateOfCreation',
+    order: '-',
+  };
 
-  $scope.itemDelete = function(index) {
-    $scope.items.splice(index, 1);
+  $scope.itemDelete = function(item) {
+    console.log('deleting item', item);
+    $scope.items = $scope.items.filter(function(i) {
+      return i.id !== item.id;
+    });
   };
 
   $scope.itemEdit = function(item) {
     console.log('editing item', item);
   };
 
-  $scope.itemReorder = function(item, $fromIndex, $toIndex) {
-    console.log('reordering item', item, $fromIndex, $toIndex);
+  $scope.itemReorder = function(item, fromIndex, toIndex) {
+    console.log('reordering item', item, fromIndex, toIndex);
+console.info('items before:\n', $scope.items);
+    $scope.items.splice(fromIndex, 1)
+    $scope.items.splice(toIndex, 0, item)
+console.info('items after:\n', $scope.items);
   };
 })
 
-.controller("CameraCtrl", function($scope, Camera, $ionicPopup, $timeout) {
+.controller("CameraCtrl", function($scope, Camera, Geo, $ionicPopup, $timeout) {
  
+  // take position to have it, since it can take some time...
+  $scope.position = Geo.getPosition();
+
   // take photo
   $scope.takePhoto = function() {
     var options = { 
@@ -63,19 +84,52 @@ $scope.items.push({
       //$scope.showAlert();
       $scope.showAlert(image);
 
+      $scope.addItem({ imgSrc: image, });
+/*
       $scope.items.push({
+        id: newId, //$scope.newId(),
         imgSrc: image,
         dateOfCreation: new Date(),
         //title: 'titolo foto',
         //description: 'descrizione foto',
-        position: 'there...',
+        position: Geo.getPosition(),
       });
+*/
+console.info('items after sorted insert:\n', $scope.items);
 
     }, function(err) {
       // An error occured. Show a message to the user
     });
   };
  
+  $scope.addItem = function(item) {
+    $scope.items.push({
+      id: $scope.newId(), //$scope.newId(),
+      imgSrc: item.imgSrc,
+      title: 'new title',
+      description: 'new description',
+      dateOfCreation: new Date(),
+      position: Geo.getPosition(),
+    });
+    $scope.sortItems();
+  };
+
+  $scope.newId = function() {
+    //return "" + ($scope.items.length + 1);
+    return "" + Math.floor((Math.random() * 99999999) + 1);
+  };
+
+  $scope.sortItems = function() {
+    $scope.items.sort(
+      function(a, b) {
+        return ($scope.sort.order === '-') ?
+          a[$scope.sort.key] - b[$scope.sort.key] :
+          b[$scope.sort.key] - a[$scope.sort.key]
+        ;
+      }
+    );
+  };
+
   // an alert dialog
   $scope.showAlert = function(text) {
     var alertPopup = $ionicPopup.alert({
@@ -115,7 +169,7 @@ $scope.items.push({
   };
 })
 
-.controller('GeoCtrl', function($scope, $cordovaGeolocation) {
+.controller('GeoCtrl', function($scope, $cordovaGeolocation, Geo) {
 
   var posOptions = {
     timeout: 10000,
@@ -127,10 +181,13 @@ $scope.items.push({
     .then(function (position) {
       var lat = position.coords.latitude
       var lng = position.coords.longitude
-      $scope.position = 'Lat:' + lat + ', ' + 'Lng:' + lng;
+      //$scope.position = 'Lat:' + lat + ', ' + 'Lng:' + lng;
+      Geo.setPosition(lat, lng);
+$scope.position = Geo.getPosition(); // ???
     }, function(err) {
       // error
-      $scope.position = err; // TODO
+      //$scope.position = err; // TODO
+      Geo.setError(err);
     })
   ;
 
@@ -144,14 +201,17 @@ $scope.items.push({
     null,
     function(err) {
       // error
-      $scope.position = err; // TODO
+      //$scope.position = err; // TODO
+      Geo.setError(err);
     },
     function(position) {
       var lat = position.coords.latitude
       var lng = position.coords.longitude
-      $scope.position = '2Lat:' + lat + ', ' + 'Lng:' + lng;
-  });
-
+      //$scope.position = 'Lat:' + lat + ', ' + 'Lng:' + lng;
+      Geo.setPosition(lat, lng);
+$scope.position = Geo.getPosition(); // ???
+    }
+  );
 
   watch.clearWatch();
   // OR
@@ -216,6 +276,10 @@ $scope.items.push({
       }
     });
   };
+
+  // sort items initially
+  $scope.sortItems();
+
 })
 
 ;

@@ -69,4 +69,25 @@ angular.module('starter.services', [])
   }
 }])
 
+.factory('Geo', function() {
+  var position = '';
+  var decimals = 2;
+  return {
+    setPosition: function(lat, lng) {
+      var multiplier = Math.pow(10, decimals);
+      position =
+        'lat:' + Math.floor(lat * multiplier) / multiplier +
+        ', ' +
+        'lng:' + Math.floor(lng * multiplier) / multiplier
+      ;
+    },
+    getPosition: function() {
+      return position;
+    },
+    setError: function(err) {
+      position = 'Errore nello stabilire la posizione attuale' + err ? ': ' + err : '';
+    },
+  };
+})
+
 ;
