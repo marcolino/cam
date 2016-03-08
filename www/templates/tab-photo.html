@@ -1,0 +1,114 @@
+<ion-view view-title="Photo">
+  <!--
+  <ion-content class="padding">
+    <h2>Welcome to Ionic</h2>
+    <p>
+    This is the Ionic starter for tabs-based apps. For other starters and ready-made templates, check out the <a href="http://market.ionic.io/starters" target="_blank">Ionic Market</a>.
+    </p>
+    <p>
+      To edit the content of each tab, edit the corresponding template file in <code>www/templates/</code>. This template is <code>www/templates/tab-dash.html</code>
+    </p>
+    <p>
+    If you need help with your app, join the Ionic Community on the <a href="http://forum.ionicframework.com" target="_blank">Ionic Forum</a>. Make sure to <a href="http://twitter.com/ionicframework" target="_blank">follow us</a> on Twitter to get important updates and announcements for Ionic developers.
+    </p>
+    <p>
+      For help sending push notifications, join the <a href="https://apps.ionic.io/signup" target="_blank">Ionic Platform</a> and check out <a href="http://docs.ionic.io/docs/push-overview" target="_blank">Ionic Push</a>. We also have other services available.
+    </p>
+  </ion-content>
+-->
+    <div ng-controller="GeoCtrl">
+      <pre>position:{{position}}</pre>
+    </div>
+
+    <ion-content>
+      <div class="container">
+        <div class="row" ng-controller="CameraCtrl">
+          <div class="center">
+            <button class="button button-positive" ng-click="takePhoto()">
+              <i class="icon ion-camera"> Scatta una Foto</i>
+            </button>
+          </div>
+        </div>
+      </div>
+  
+        <ion-list
+          show-delete="shouldShowDelete"
+          show-reorder="shouldShowReorder"
+          can-swipe="listCanSwipe"
+        >
+          <ion-item ng-repeat="item in items | orderBy:'-dateOfCreation'">
+            <div class="row">
+              <div class="col">
+                <img ng-src="{{item.imgSrc}}" height="64">
+              </div>
+              <div class="col">
+                <!--
+                <div><input type="text" placeholder="title" ng-value="{{item.title}}"></div>
+                -->
+                <div><input type="text" placeholder="descrizione" ng-value="item.description"></div>
+                <div>{{item.dateOfCreation | date:"yyyy-MM-dd H:mm"}}</div>
+                <div>{{item.position}}</div>
+              </div>
+              <div class="col">
+                <ion-button class="ion-trash-b" style="font-size:32px" ng-click="itemDelete($index)"></ion-button>
+              </div>
+          </ion-item>
+        </ion-list>
+
+<!--
+        <ion-list
+          show-delete="shouldShowDelete"
+          show-reorder="shouldShowReorder"
+          can-swipe="listCanSwipe"
+        >
+          <ion-item ng-repeat="item in items | orderBy:'-dateOfCreation'" class="item-thumbnail-left">
+            <img ng-src="{{item.imgSrc}}" width="64">
+            <h2>{{item.title}}</h2>
+            <p>{{item.description}}</p>
+            <p>{{item.dateOfCreation}}</p>
+            <p>{{item.position}}</p>
+
+            <ion-option-button class="button-positive"
+              ng-click="edit(item)">
+              Edit
+            </ion-option-button>
+
+            <ion-reorder-button class="ion-navicon"
+              on-reorder="reorderItem(item, $fromIndex, $toIndex)">
+            </ion-reorder-button>
+        
+            <ion-delete-button class="ion-minus-circled"
+              ng-click="items.splice($index, 1)">
+            </ion-delete-button>
+
+          </ion-item>
+        </ion-list>
+-->
+<!--
+        <div class="col-70 center">
+
+          <ion-scroll direction="y">
+            <div class="list">
+
+              <a class="item _item-thumbnail-left" href="#">
+                <div class="row">
+                  <div class="col-30 center">
+                    <img ng-show="imgURI !== undefined" width="64" ng-src="{{imgURI}}">
+                    <img ng-show="imgURI === undefined" width="64" ng-src="http://placehold.it/64x64">
+                  </div>
+                  <div class="col-70">
+                    <h2>Frattura metatarso</h2>
+                    <p>Foto scattata il 2016-03-07</p>
+                    <p>Posizione: Lat 45.465465, Lng 9.546757</p>
+                  </div>
+                </div>
+              </a>
+
+            </div>
+          </ion-scroll>
+        </div>
+-->
+
+    </ion-content>
+
+</ion-view>

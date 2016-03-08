@@ -1,10 +1,10 @@
 angular.module('starter.services', [])
 
-.factory('Chats', function() {
+.factory('Video', function() {
   // Might use a resource here that returns a JSON array
 
   // Some fake testing data
-  var chats = [{
+  var videos = [{
     id: 0,
     name: 'Ben Sparrow',
     lastText: 'You on your way?',
@@ -33,15 +33,15 @@ angular.module('starter.services', [])
 
   return {
     all: function() {
-      return chats;
+      return videos;
     },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
+    remove: function(video) {
+      videos.splice(videos.indexOf(video), 1);
     },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
+    get: function(videoId) {
+      for (var i = 0; i < videos.length; i++) {
+        if (videos[i].id === parseInt(videoId)) {
+          return videos[i];
         }
       }
       return null;
@@ -52,6 +52,8 @@ angular.module('starter.services', [])
 .factory('Camera', ['$q', function($q) {
  
   return {
+    getProps: function() { return navigator.camera; },
+
     getPhoto: function(options) {
       var q = $q.defer();
       
@@ -63,7 +65,7 @@ angular.module('starter.services', [])
       }, options);
       
       return q.promise;
-    }
+    },
   }
 }])
 
